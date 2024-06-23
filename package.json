@@ -1,0 +1,32 @@
+{
+  "name": "auto.mate",
+  "version": "1.0.0",
+  "description": "A backend API that can digitally record daily activities and process corresponding data, integrated seamlessly in the Apple's Shortcuts app.",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node-esm src/index.ts",
+    "dev": "ts-node-esm -T src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/Nathan-Mu/Auto.Mate.git",
+  "author": "Nathan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nathan-Mu/Auto.Mate/issues"
+  },
+  "homepage": "https://github.com/Nathan-Mu/Auto.Mate#readme",
+  "dependencies": {
+    "csv-parse": "^5.5.6"
+  },
+  "devDependencies": {
+    "@types/node": "18.19.39",
+    "prettier": "^3.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "engines": {
+    "node": "18.14.0"
+  }
+}
