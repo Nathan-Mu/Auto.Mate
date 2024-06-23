@@ -1,0 +1,2 @@
+# Auto.Mate
+Automation API
