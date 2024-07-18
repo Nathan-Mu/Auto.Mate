@@ -1,5 +1,11 @@
-import processTransactions from './transaction/index.js';
+import express from 'express';
+import { APP_PORT } from './config.ts';
+import routes from './routes/index.ts';
 
-console.log('Hello World!');
+const app = express();
 
-await processTransactions();
+app.use('/', routes);
+
+app.listen(APP_PORT, () => {
+  console.log(`Server is running on port ${APP_PORT}`);
+});
