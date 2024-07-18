@@ -1,12 +1,13 @@
-import readCSV from '../readCSV.js';
+import readCSV from '../readCSV.ts';
 import {
   INTERNAL_TRANSFER_TYPES,
+  RecordCategory,
   TRANSFER_TO_MYSELF_KEYWORD,
   merchantToBank,
   providerToBank,
   whitelist,
-} from './config.js';
-import { Transaction } from './types.js';
+} from './config.ts';
+import { Transaction } from './types.ts';
 
 export async function readTransactions(
   fileName: string,
@@ -34,20 +35,20 @@ export function isPaidInterest(transaction) {
   return transaction.transaction_type === 'interest_paid';
 }
 
+export function isSalary(transaction) {
+  return transaction.description.includes('Salary Nine');
+}
+
 export function isReceivedRepayment(transaction) {
   return transaction.description.includes('ONLINE PAYMENT RECEIVED');
 }
 
 export function isRepayingCreditCard(transaction) {
-  return ['American Express', 'Citibank (Credit Cards)'].includes(
-    transaction.merchant_name,
-  );
+  return Object.keys(merchantToBank).includes(transaction.merchant_name);
 }
 
-export function temp_isCorrect(transaction, assertion) {
-  return transaction.temp_category === assertion
-    ? 'yes'
-    : 'NO!!!!!!!!!!!!!!!!!!!';
+export function getCreditBankNameByMerchantName(merchantName) {
+  return merchantToBank[merchantName];
 }
 
 export function isExternalTransfer(transaction) {
@@ -69,4 +70,25 @@ export function isTransferToMyself(transaction) {
 
 export function getBankNameByMerchantName(merchantName) {
   return merchantToBank[merchantName];
+}
+
+export function not(fn) {
+  return (...args) => !fn(...args);
+}
+
+export function getIncomeCategory(transaction) {
+  if (isPaidInterest(transaction)) {
+    return RecordCategory.Interest;
+  }
+  if (isSalary(transaction)) {
+    return RecordCategory.Salary;
+  }
+  return RecordCategory.UnknownIncome;
+}
+
+export function getPaymentCategory(transaction) {
+  if (isRepayingCreditCard(transaction)) {
+    return RecordCategory.CreditCardRepayment;
+  }
+  return RecordCategory.UnknownPayment;
 }

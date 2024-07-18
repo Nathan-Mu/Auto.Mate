@@ -17,7 +17,6 @@ export const whitelist = {
   user_tags: false,
   notes: false,
   included: false,
-  temp_category: true,
 };
 
 export const enum Bank {
@@ -43,6 +42,9 @@ export enum RecordCategory {
   Interest = 'Interest',
   Payment = 'Payment',
   CreditCardRepayment = 'Credit Card Repayment',
+  Salary = 'Salary',
+  UnknownIncome = 'Unknown Income',
+  UnknownPayment = 'Unknown Payment',
 }
 
 export enum RecordType {
@@ -61,6 +63,8 @@ export const scheduledTransactions = [
     keyword: 'Payway Rent & Hire',
     merchant_name: 'Payway',
   },
+  {},
 ];
 
+// regex
 export const TRANSFER_TO_MYSELF_KEYWORD = 'D ZHAO|DONGYU ZHAO|MY ANZ SAVE';

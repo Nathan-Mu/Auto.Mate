@@ -1,22 +1,22 @@
-import { Bank, RecordCategory, RecordType } from './config.js';
+import { Bank, RecordCategory, RecordType } from './config.ts';
 import {
   getBankNameByProvider,
+  getCreditBankNameByMerchantName,
+  getIncomeCategory,
+  getPaymentCategory,
   isExternalTransfer,
   isInternalTransfer,
-  isPaidInterest,
   isReceivedRepayment,
   isRepayingCreditCard,
   isTransferToMyself,
+  not,
   readTransactions,
-  temp_isCorrect,
-} from './utils.js';
+} from './utils.ts';
 
-export default async function processTransactions() {
-  const records = [];
-  const transactions = await readTransactions('sample-30days.csv');
-  const [transfers, others] = transactions
-    .filter((transaction) => !isInternalTransfer(transaction))
-    .filter((transaction) => !isReceivedRepayment(transaction))
+function splitRawTransactions(rawTransactions) {
+  const [rawTransfers, others] = rawTransactions
+    .filter(not(isInternalTransfer))
+    .filter(not(isReceivedRepayment))
     .reduce(
       ([t, o], transaction) =>
         isExternalTransfer(transaction)
@@ -25,7 +25,7 @@ export default async function processTransactions() {
       [[], []],
     );
 
-  const [transfersWithinMyself, transfersWithOthers] = transfers
+  const [transfersWithMyself, transfersWithOthers] = rawTransfers
     .sort((a, b) => Number(a.transaction_id) - Number(b.transaction_id))
     .reduce(
       ([withMyself, withOthers], transaction) =>
@@ -35,7 +35,30 @@ export default async function processTransactions() {
       [[], []],
     );
 
-  transfersWithinMyself
+  const paymentsAndIncome = [...others, ...transfersWithOthers];
+
+  const [payments, income] = paymentsAndIncome.reduce(
+    ([p, i], transaction) =>
+      Number(transaction.amount) > 0
+        ? [p, [...i, transaction]]
+        : [[...p, transaction], i],
+    [[], []],
+  );
+
+  return {
+    transfers: transfersWithMyself,
+    payments,
+    income,
+  };
+}
+
+export default async function processTransactions(filename: string) {
+  const records = [];
+  const transactions = await readTransactions(filename);
+
+  const { transfers, payments, income } = splitRawTransactions(transactions);
+
+  transfers
     .filter((transaction) => Number(transaction.amount) < 0)
     .forEach((transaction) => {
       const bank = getBankNameByProvider(transaction.provider_name);
@@ -48,53 +71,50 @@ export default async function processTransactions() {
         type: RecordType.Transfer,
         to: bank === Bank.CBA ? Bank.ANZ : Bank.CBA,
         category: RecordCategory.Transfer,
-        'Correct?': temp_isCorrect(transaction, 'between_bank_transfer'),
       });
     });
 
-  const paymentsAndIncomes = [...others, ...transfersWithOthers];
+  income.forEach((transaction) => {
+    const category = getIncomeCategory(transaction);
+    records.push({
+      date: transaction.transaction_date,
+      bank: getBankNameByProvider(transaction.provider_name),
+      amount: Math.abs(Number(transaction.amount)),
+      type: RecordType.In,
+      merchant: transaction.merchant_name,
+      description: transaction.description,
+      category,
+    });
+  });
 
-  paymentsAndIncomes.map((transaction) => {
-    if (isPaidInterest(transaction)) {
-      return {
-        date: transaction.transaction_date,
-        bank: getBankNameByProvider(transaction.provider_name),
-        amount: Math.abs(Number(transaction.amount)),
-        type: RecordType.In,
-        merchant: transaction.merchant_name,
-        category: RecordCategory.Interest,
-        'Correct?': temp_isCorrect(transaction, 'interest'),
-      };
-    }
+  payments.map((transaction) => {
+    const category = getPaymentCategory(transaction);
+    const bank = getBankNameByProvider(transaction.provider_name);
     if (isRepayingCreditCard(transaction)) {
-      const bank = getBankNameByProvider(transaction.provider_name);
-      return {
+      const to = getCreditBankNameByMerchantName(transaction.merchant_name);
+      records.push({
         date: transaction.transaction_date,
         bank,
         from: bank,
-        to: 'AMEX',
+        to,
         amount: Math.abs(Number(transaction.amount)),
-        type: RecordCategory.Transfer,
+        type: RecordType.Transfer,
         merchant: transaction.merchant_name,
+        description: transaction.description,
         category: RecordCategory.CreditCardRepayment,
-        'Correct?': temp_isCorrect(transaction, 'credit_repayment'),
-      };
+      });
+    } else {
+      records.push({
+        date: transaction.transaction_date,
+        bank,
+        amount: Math.abs(Number(transaction.amount)),
+        type: RecordType.Out,
+        merchant: transaction.merchant_name,
+        description: transaction.description,
+        category,
+      });
     }
-    if (transaction.temp_category === 'payment') return;
-    return transaction;
   });
-  // console.log(
-  //   'Transfer transactions:',
-  //   activeTransactions
-  //     .filter(Boolean)
-  //     .filter((item) => item['Correct?'] !== 'yes'),
-  // );
-  console.log(records);
+  console.table(records);
+  return records;
 }
-
-// todo
-// credit card repayment (in & out)
-// Transfer between banks
-// filter out schedule transactions (like rent, bills, etc)
-// interest
-// income and payment
