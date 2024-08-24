@@ -1,0 +1,1 @@
+jq -r .version package.json

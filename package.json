@@ -8,7 +8,9 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build:prod": "sh ./scripts/build-push-to-prod.sh",
+    "docker:build:dev": "docker build -t auto.mate:$(sh ./get-version)-dev ."
   },
   "repository": "git+https://github.com/Nathan-Mu/Auto.Mate.git",
   "author": "Nathan",
