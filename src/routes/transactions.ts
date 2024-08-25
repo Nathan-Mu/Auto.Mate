@@ -26,10 +26,15 @@ router.post('/upload', (req, res) => {
       console.error(err);
       res.status(500).send('Error uploading file');
     } else {
-      console.log(req.file);
-      const records = await processTransactions(req.file.path);
-      console.log('File processed');
-      res.send(records);
+      try {
+        console.log(req.file);
+        const records = await processTransactions(req.file.path);
+        console.log('File processed');
+        res.send(records);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Error processing file');
+      }
     }
   });
 });
