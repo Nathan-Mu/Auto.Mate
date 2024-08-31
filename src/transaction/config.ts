@@ -21,7 +21,7 @@ export const whitelist = {
 
 export const enum Bank {
   CBA = 'CBA',
-  ANZ = 'ANZ',
+  ANZ = 'ANZ Plus',
   AMEX = 'AMEX',
   Citi = 'Citi',
 }
