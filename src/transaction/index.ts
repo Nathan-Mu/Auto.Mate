@@ -69,6 +69,7 @@ export default async function processTransactions(filename: string) {
         bank,
         from: bank,
         type: RecordType.Transfer,
+        // todo: handle more than 2 banks
         to: bank === Bank.CBA ? Bank.ANZ : Bank.CBA,
         category: RecordCategory.Transfer,
       });
