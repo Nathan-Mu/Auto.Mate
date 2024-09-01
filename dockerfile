@@ -1,12 +1,16 @@
 FROM node:22.6.0-alpine3.19
 RUN addgroup app && adduser -S -G app app
+
 USER app
 WORKDIR /app
 
-COPY ["scripts/remove-version.sh", "./"]
-COPY ["package.json", "yarn.lock", "scripts/remove-version.sh", "./"]
-RUN chmod +x remove-version.sh
-RUN ./remove-version.sh
+COPY ["scripts/remove-version.sh", "./scripts/"]
+USER root
+RUN chmod +x ./scripts/remove-version.sh
+
+USER app
+COPY ["package.json", "yarn.lock", "./"]
+RUN  sh ./scripts/remove-version.sh
 
 RUN yarn
 COPY . .
