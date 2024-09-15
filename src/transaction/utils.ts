@@ -1,5 +1,6 @@
 import readCSV from '../readCSV.ts';
 import {
+  Bank,
   INTERNAL_TRANSFER_TYPES,
   RecordCategory,
   TRANSFER_TO_MYSELF_KEYWORD,
@@ -91,4 +92,14 @@ export function getPaymentCategory(transaction) {
     return RecordCategory.CreditCardRepayment;
   }
   return RecordCategory.UnknownPayment;
+}
+
+export function getInternalTransferReceiver(description) {
+  if (description.match(new RegExp('Payment to D Zhao', 'i'))) {
+    return Bank.CBA;
+  } else if (description.match(new RegExp('Payment to DONGYU ZHAO|MY ANZ SAVE', 'i'))) {
+    return Bank.ANZ;
+  } else if (description.match(new RegExp('My Ub Save', 'i'))) {
+    return Bank.UBank;
+  }
 }

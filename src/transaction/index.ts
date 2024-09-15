@@ -3,6 +3,7 @@ import {
   getBankNameByProvider,
   getCreditBankNameByMerchantName,
   getIncomeCategory,
+  getInternalTransferReceiver,
   getPaymentCategory,
   isExternalTransfer,
   isInternalTransfer,
@@ -69,8 +70,7 @@ export default async function processTransactions(filename: string) {
         bank,
         from: bank,
         type: RecordType.Transfer,
-        // todo: handle more than 2 banks
-        to: bank === Bank.CBA ? Bank.ANZ : Bank.CBA,
+        to: getInternalTransferReceiver(transaction.description),
         category: RecordCategory.Transfer,
       });
     });
@@ -117,5 +117,6 @@ export default async function processTransactions(filename: string) {
     }
   });
   console.table(records);
+  console.log('Done: processTransactions');
   return records;
 }

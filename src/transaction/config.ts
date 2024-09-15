@@ -24,12 +24,14 @@ export const enum Bank {
   ANZ = 'ANZ Plus',
   AMEX = 'Amex',
   Citi = 'Citi',
+  UBank = 'UBank',
 }
 
 export const providerToBank = {
   ['American Express Cards']: Bank.AMEX,
   ['ANZ Plus']: Bank.ANZ,
   ['CommBank']: Bank.CBA,
+  ['ubank']: Bank.UBank,
 };
 
 export const merchantToBank = {
@@ -67,4 +69,5 @@ export const scheduledTransactions = [
 ];
 
 // regex
-export const TRANSFER_TO_MYSELF_KEYWORD = 'D ZHAO|DONGYU ZHAO|MY ANZ SAVE';
+export const TRANSFER_TO_MYSELF_KEYWORD =
+  'Payment to D Zhao|Payment to DONGYU ZHAO|MY ANZ SAVE|My Ub Save';
