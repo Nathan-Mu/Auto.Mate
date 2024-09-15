@@ -70,4 +70,4 @@ export const scheduledTransactions = [
 
 // regex
 export const TRANSFER_TO_MYSELF_KEYWORD =
-  'Payment to D Zhao|Payment to DONGYU ZHAO|MY ANZ SAVE|My Ub Save';
+  'payment to d z.{2}o|payment to d.{5} z.{2}o|my anz save|my ub save|from d.{5} z.{2}o';
