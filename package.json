@@ -1,6 +1,6 @@
 {
   "name": "auto.mate",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A backend API that can digitally record daily activities and process corresponding data, integrated seamlessly in the Apple's Shortcuts app.",
   "main": "src/index.ts",
   "type": "module",
