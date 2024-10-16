@@ -28,7 +28,7 @@ export const enum Bank {
 }
 
 export const providerToBank = {
-  ['American Express Cards']: Bank.AMEX,
+  ['American Express']: Bank.AMEX,
   ['ANZ Plus']: Bank.ANZ,
   ['CommBank']: Bank.CBA,
   ['ubank']: Bank.UBank,
