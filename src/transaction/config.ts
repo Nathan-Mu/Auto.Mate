@@ -25,6 +25,7 @@ export const enum Bank {
   AMEX = 'Amex',
   Citi = 'Citi',
   UBank = 'UBank',
+  NAB = 'NAB',
 }
 
 export const providerToBank = {
@@ -32,6 +33,7 @@ export const providerToBank = {
   ['ANZ Plus']: Bank.ANZ,
   ['CommBank']: Bank.CBA,
   ['ubank']: Bank.UBank,
+  ['NAB']: Bank.NAB,
 };
 
 export const merchantToBank = {
@@ -65,7 +67,7 @@ export const scheduledTransactions = [
     keyword: 'Payway Rent & Hire',
     merchant_name: 'Payway',
   },
-  {},
+  // {},
 ];
 
 // regex
