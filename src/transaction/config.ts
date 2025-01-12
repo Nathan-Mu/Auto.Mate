@@ -26,6 +26,7 @@ export const enum Bank {
   Citi = 'Citi',
   UBank = 'UBank',
   NAB = 'NAB',
+  Coles = 'Coles',
 }
 
 export const providerToBank = {
@@ -34,6 +35,7 @@ export const providerToBank = {
   ['CommBank']: Bank.CBA,
   ['ubank']: Bank.UBank,
   ['NAB']: Bank.NAB,
+  ['Coles Financial Services']: Bank.Coles,
 };
 
 export const merchantToBank = {
